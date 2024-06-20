@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic;
 
-namespace Dima.Core.Response
+namespace Dima.Core.Responses
 {
     public class Response<TData>
     {

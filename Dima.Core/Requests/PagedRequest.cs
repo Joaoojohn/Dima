@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dima.Core.Request
+namespace Dima.Core.Requests
 {
     public abstract class PagedRequest : Request
     {
