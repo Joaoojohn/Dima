@@ -3,13 +3,15 @@ using Dima.Core.Handlers;
 using Dima.Core.Models;
 using Dima.Core.Requests.Categories;
 using Dima.Core.Responses;
+using Microsoft.EntityFrameworkCore;
 using System.Data.Common;
+using System.Linq;
 
 namespace Dima.Api.Handers
 {
     public class CategoryHandler(AppDbContext context) : ICategoryHandler
     {
-        public async Task<Response<Category>> CreateAsync(CreateCategoryRequest createCategoryRequest)
+        public async Task<Response<Category?>> CreateAsync(CreateCategoryRequest createCategoryRequest)
         {
             try
             {
@@ -23,35 +25,93 @@ namespace Dima.Api.Handers
                 await context.Categories.AddAsync(category);
                 await context.SaveChangesAsync();
 
-                return new Response<Category>(category);
+                return new Response<Category?>(category, 201, "Categoria criada com sucesso.");
             }
-            catch (Exception e)
+            catch
             {
+                return new Response<Category?>(null, 500, "Erro ao criar categoria.");
+            }
+        }
+        
+        public async Task<Response<Category?>> UpdateAsync(UpdateCategoryRequest updateCategoryRequest)
+        {
+            try
+            {
+                var category =  FindCategory(updateCategoryRequest.Id, updateCategoryRequest.UserId);
 
-                Console.WriteLine(e);
-                throw new Exception("Erro ao criar categoria");
+                if (category is null)
+                    return new Response<Category?>(null, 404, "não foi possível encontrar a categoria");
+
+                category.Title = updateCategoryRequest.Title;
+                category.Description = updateCategoryRequest.Description;
+
+                context.Categories.Update(category);
+
+                await context.SaveChangesAsync();
+
+                return new Response<Category?>(category, message: "Categoria atualizada com sucesso.");
+            }
+            catch
+            {
+                return new Response<Category?>(null, 500, "Erro ao atualizar categoria.");
+            }
+        }
+        
+        public async Task<Response<Category?>> DeleteAsync(DeleteCategoryRequest deleteCategoryRequest)
+        {
+            try
+            {
+                var category = FindCategory(deleteCategoryRequest.Id, deleteCategoryRequest.UserId);
+
+                if (category is null)
+                    return new Response<Category?>(null, 404, "não foi possível encontrar a categoria");
+
+                context.Categories.Remove(category);
+                await context.SaveChangesAsync();
+
+                return new Response<Category?>(category, message: "Categoria escluída com sucesso.");
+            }
+            catch
+            {
+                return new Response<Category?>(null, 500, "Erro ao excluir categoria.");
+            }
+        }
+        
+        public async Task<Response<Category?>> GetByIdAsync(GetCategoryByIdRequest getCategoryByIdRequest)
+        {
+            try
+            {
+                var category = await context.Categories.AsNoTracking().FirstOrDefaultAsync(i => i.Id == getCategoryByIdRequest.Id && i.UserId == getCategoryByIdRequest.UserId);
+
+                return category is null ? new Response<Category?>(null, 404, "não foi possível encontrar a categoria") : new Response<Category?>(category);
+            }
+            catch
+            {
+                return new Response<Category?>(null, 500, "Não foi possível encontrar uma categoria.");
             }
         }
 
-
-        public Task<Response<Category>> DeleteAsync(DeleteCategoryRequest deleteCategoryRequest)
+        public async Task<PagedResponse<List<Category>>> GetAllAsync(GetAllCategoriesRequest getAllCategoryRequest)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var query = context.Categories.AsNoTracking().Where(i => i.UserId == getAllCategoryRequest.UserId).OrderBy(t => t.Title);
+
+                var categories = await query.Skip((getAllCategoryRequest.PageNumber - 1) * getAllCategoryRequest.PagaSize)
+                                            .Take(getAllCategoryRequest.PagaSize)
+                                            .ToListAsync();
+
+                var count = await query.CountAsync();
+
+                return new PagedResponse<List<Category>>(categories, count, getAllCategoryRequest.PageNumber, getAllCategoryRequest.PagaSize);
+            }
+            catch
+            {
+                return new PagedResponse<List<Category>>(null, 500, "Não foi possível consultar as categoria.");
+            }
         }
 
-        public Task<Response<List<Category>>> GetAllAsync(GetAllCategoriesRequest getAllCategoryRequest)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Response<Category>> GetByIdAsync(GetCategoryByIdRequest getCategoryByIdRequest)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Response<Category>> UpdateAsync(UpdateCategoryRequest updateCategoryRequest)
-        {
-            throw new NotImplementedException();
-        }
+        private Category? FindCategory(long idCategory, string userId)
+            => context.Categories.FirstOrDefault(i => i.Id == idCategory && i.UserId == userId);
     }
 }
