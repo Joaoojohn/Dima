@@ -97,13 +97,13 @@ namespace Dima.Api.Handers
             {
                 var query = context.Categories.AsNoTracking().Where(i => i.UserId == getAllCategoryRequest.UserId).OrderBy(t => t.Title);
 
-                var categories = await query.Skip((getAllCategoryRequest.PageNumber - 1) * getAllCategoryRequest.PagaSize)
-                                            .Take(getAllCategoryRequest.PagaSize)
+                var categories = await query.Skip((getAllCategoryRequest.PageNumber - 1) * getAllCategoryRequest.PageSize)
+                                            .Take(getAllCategoryRequest.PageSize)
                                             .ToListAsync();
 
                 var count = await query.CountAsync();
 
-                return new PagedResponse<List<Category>>(categories, count, getAllCategoryRequest.PageNumber, getAllCategoryRequest.PagaSize);
+                return new PagedResponse<List<Category>>(categories, count, getAllCategoryRequest.PageNumber, getAllCategoryRequest.PageSize);
             }
             catch
             {

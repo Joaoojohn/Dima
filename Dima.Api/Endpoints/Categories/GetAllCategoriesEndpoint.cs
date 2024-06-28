@@ -23,7 +23,7 @@ namespace Dima.Api.Endpoints.Categories
             var request = new GetAllCategoriesRequest
             {
                 UserId = "joaoojohn",
-                PagaSize = pageSize,
+                PageSize = pageSize,
                 PageNumber = pageNumber
             };
 

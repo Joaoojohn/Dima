@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Dima.Core.Enums
+namespace Dima.Core.Requests.Transactions
 {
-    public enum ETransactionType
+    public class GetTransactionByIdRequest : Request
     {
-        Deposit = 1,
-        Withdraw = 2,
+        public long Id { get; set; }
     }
 }
