@@ -1,9 +1,9 @@
 ﻿using Dima.Api.Common.Api;
 using Dima.Core.Handlers;
 using Dima.Core.Models;
-using Dima.Core.Requests.Categories;
 using Dima.Core.Requests.Transactions;
 using Dima.Core.Responses;
+using System.Security.Claims;
 
 namespace Dima.Api.Endpoints.Transactions
 {
@@ -17,9 +17,9 @@ namespace Dima.Api.Endpoints.Transactions
                                .WithOrder(2)
                                .Produces<Response<Transaction?>>();
 
-        private static async Task<IResult> HendleAsync(ITransactionHandler handler, UpdateTransactionRequest request, long id)
+        private static async Task<IResult> HendleAsync(ClaimsPrincipal user, ITransactionHandler handler, UpdateTransactionRequest request, long id)
         {
-            request.UserId = "joaoojohn";
+            request.UserId = user.Identity?.Name ?? string.Empty;
             request.Id = id;
 
             var result = await handler.UpdateAsync(request);

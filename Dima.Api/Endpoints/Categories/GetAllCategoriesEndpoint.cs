@@ -5,6 +5,7 @@ using Dima.Core.Models;
 using Dima.Core.Requests.Categories;
 using Dima.Core.Responses;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Dima.Api.Endpoints.Categories
 {
@@ -18,11 +19,11 @@ namespace Dima.Api.Endpoints.Categories
                                  .WithOrder(5)
                                  .Produces<PagedResponse<List<Category>?>>();
 
-        private static async Task<IResult> HendleAsync(ICategoryHandler handler, [FromQuery] int pageNumber = Configuration.DefaultPageNumber, [FromQuery] int pageSize = Configuration.DefaultPageSize)
+        private static async Task<IResult> HendleAsync(ClaimsPrincipal user, ICategoryHandler handler, [FromQuery] int pageNumber = Configuration.DefaultPageNumber, [FromQuery] int pageSize = Configuration.DefaultPageSize)
         {
             var request = new GetAllCategoriesRequest
             {
-                UserId = "joaoojohn",
+                UserId = user.Identity?.Name ?? string.Empty,
                 PageSize = pageSize,
                 PageNumber = pageNumber
             };

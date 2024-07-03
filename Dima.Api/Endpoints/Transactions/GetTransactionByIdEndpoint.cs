@@ -4,6 +4,7 @@ using Dima.Core.Models;
 using Dima.Core.Requests.Categories;
 using Dima.Core.Requests.Transactions;
 using Dima.Core.Responses;
+using System.Security.Claims;
 
 namespace Dima.Api.Endpoints.Transactions
 {
@@ -17,11 +18,11 @@ namespace Dima.Api.Endpoints.Transactions
                                 .WithOrder(4)
                                 .Produces<Response<Transaction?>>();
 
-        private static async Task<IResult> HendleAsync(ITransactionHandler handler, long id)
+        private static async Task<IResult> HendleAsync(ClaimsPrincipal user, ITransactionHandler handler, long id)
         {
             var request = new GetTransactionByIdRequest()
             {
-                UserId = "joaoojohn",
+                UserId = user.Identity?.Name ?? string.Empty,
                 Id = id
             };
 

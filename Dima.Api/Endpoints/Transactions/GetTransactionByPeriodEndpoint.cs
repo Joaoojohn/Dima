@@ -5,6 +5,7 @@ using Dima.Core.Responses;
 using Dima.Core;
 using Microsoft.AspNetCore.Mvc;
 using Dima.Core.Requests.Transactions;
+using System.Security.Claims;
 
 namespace Dima.Api.Endpoints.Transactions
 {
@@ -18,7 +19,7 @@ namespace Dima.Api.Endpoints.Transactions
                          .WithOrder(5)
                          .Produces<PagedResponse<List<Transaction>?>>();
 
-        private static async Task<IResult> HendleAsync(ITransactionHandler handler, 
+        private static async Task<IResult> HendleAsync(ClaimsPrincipal user, ITransactionHandler handler, 
             [FromQuery] DateTime? starDate = null, 
             [FromQuery] DateTime? endDate = null, 
             [FromQuery] int pageNumber = Configuration.DefaultPageNumber, 
@@ -26,7 +27,7 @@ namespace Dima.Api.Endpoints.Transactions
         {
             var request = new GetTransactionsByPeriodRequest
             {
-                UserId = "joaoojohn",
+                UserId = user.Identity?.Name ?? string.Empty,
                 PageSize = pageSize,
                 PageNumber = pageNumber,
                 StartDate = starDate,
