@@ -1,37 +1,22 @@
-using Dima.Api.Data;
+using Dima.Api.Common.Api;
 using Dima.Api.Endpoints;
-using Dima.Api.Handers;
 using Dima.Api.Models;
-using Dima.Core.Handlers;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(s => s.CustomSchemaIds(n => n.FullName));
-
-builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme).AddIdentityCookies();
-builder.Services.AddAuthorization();
-
-builder.Services.AddDbContext<AppDbContext>( d => d.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? string.Empty));
-builder.Services.AddIdentityCore<User>().AddRoles<IdentityRole<long>>().AddEntityFrameworkStores<AppDbContext>().AddApiEndpoints();
-
-builder.Services.AddTransient<ICategoryHandler, CategoryHandler>();
-builder.Services.AddTransient<ITransactionHandler, TransactionHandler>();
+builder.AddConnectionString();
+builder.AddSegurity();
+builder.AddDataContexts();
+builder.AddCrossOrigin();
+builder.AddDocumentation();
+builder.AddServices();
 
 var app = builder.Build();
 
-app.UseAuthentication();
-app.UseAuthorization();
+if (app.Environment.IsDevelopment())
+    app.ConfigureDevEnvironment();
 
-app.UseSwagger();
-app.UseSwaggerUI();
-
-
-app.MapGet("/", () => new { message = "is running" });
+app.UseSecurity();
 app.MapEndpoints();
-app.MapGroup("v1/identity").WithTags("Identity").MapIdentityApi<User>();
 
 app.Run();

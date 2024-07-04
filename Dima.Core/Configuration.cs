@@ -19,8 +19,11 @@ namespace Dima.Core
 
         public const int DefaultStatusCode = 200;
 
-
         #endregion
 
+        #region connectionString
+        public static string ConnectionString { get; set; } = string.Empty;
+
+        #endregion
     }
 }
