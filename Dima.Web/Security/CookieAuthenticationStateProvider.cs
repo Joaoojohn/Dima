@@ -1,0 +1,86 @@
+﻿using Dima.Core.Models.Account;
+using Microsoft.AspNetCore.Components.Authorization;
+using System.Net.Http.Json;
+using System.Security.Claims;
+
+namespace Dima.Web.Security
+{
+    public class CookieAuthenticationStateProvider(IHttpClientFactory httpClientFactory) : AuthenticationStateProvider, ICookieAuthenticationStateProvider
+    {
+        private bool _isAuthenticated = false;
+        private readonly HttpClient _client = httpClientFactory.CreateClient(Configuration.HttpClientName);
+
+        public async Task<bool> CheckAuthenticationAsync()
+        {
+            await GetAuthenticationStateAsync();
+            return _isAuthenticated;
+        }
+
+        public void NotifyAuthenticationStateChanged()
+            => NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+
+        public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+        {
+            _isAuthenticated = false;
+
+            var user = new ClaimsPrincipal(new ClaimsIdentity());
+
+            var userInfo = await GetUserAsync();
+
+            if (userInfo is null)
+                return new AuthenticationState(user);
+
+            var claims = await GetClaimsAsync(userInfo);
+
+            user = new ClaimsPrincipal(new ClaimsIdentity(claims, nameof(CookieAuthenticationStateProvider)));
+            
+            _isAuthenticated = true;
+            
+            return new AuthenticationState(user);
+        }
+
+        private async Task<User?> GetUserAsync()
+        {
+            try
+            {
+                return await _client.GetFromJsonAsync<User?>("v1/identity/menage/user/info");
+            }
+            catch 
+            {
+                return null;
+            }
+        }
+
+        private async Task<List<Claim>> GetClaimsAsync(User user)
+        {
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Email, user.Email)
+            };
+
+            claims.AddRange
+                (
+                    user.Claims.Where(u => u.Key != ClaimTypes.Name && u.Key != ClaimTypes.Email)
+                    .Select(c => new Claim(c.Key, c.Value))
+                );
+
+            RoleClaim[]? roles;
+
+            try
+            {
+                roles = await _client.GetFromJsonAsync<RoleClaim[]>("v1/identity/roles");
+            }
+            catch
+            {
+                return claims;
+            }
+
+            foreach (var role in roles ?? [])
+                if (!string.IsNullOrEmpty(role.Type) && !string.IsNullOrEmpty(role.Value))
+                    claims.Add(new Claim(role.Type, role.Value, role.ValueType, role.Issuer, role.OriginalIssuer));
+
+            return claims;
+        }
+    }   
+}
