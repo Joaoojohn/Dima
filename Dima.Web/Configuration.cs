@@ -19,24 +19,24 @@ namespace Dima.Web
             },
             Palette = new PaletteLight
             {
-                Primary = new MudColor("#1EFA2D"),
-                PrimaryContrastText = new MudColor("#000000"),
+                Primary = new MudColor("#b5b5b5"),
+                PrimaryContrastText = new MudColor("#ffff"),
                 Secondary = Colors.LightGreen.Darken3,
-                Background = Colors.Grey.Lighten4,
-                AppbarBackground = new MudColor("#1EFA2D"),
-                AppbarText = Colors.Shades.Black,
-                TextPrimary = Colors.Shades.Black,
-                DrawerText = Colors.Shades.White,
-                DrawerBackground = Colors.Green.Darken4
+                Background = new MudColor("#666666"),
+                AppbarBackground = new MudColor("#666666"),
+                AppbarText = new MudColor("#ffff"),
+                TextPrimary = new MudColor("#3c3c3c"),
+                DrawerText = new MudColor("#ffff"),
+                DrawerBackground = new MudColor("#3c3c3c")
             },
             PaletteDark = new PaletteDark
             {
-                Primary = Colors.LightGreen.Accent3,
+                Primary = new MudColor("#666666"),
                 Secondary = Colors.LightGreen.Darken3,
-                // Background = Colors.LightGreen.Darken4,
-                AppbarBackground = Colors.LightGreen.Accent3,
-                AppbarText = Colors.Shades.Black,
-                PrimaryContrastText = new MudColor("#000000")
+                Background = Colors.Shades.Black,
+                AppbarBackground = Colors.Shades.Black,
+                AppbarText = new MudColor("#b5b5b5"),
+                PrimaryContrastText = new MudColor("#b5b5b5"),
             }
         };
     }

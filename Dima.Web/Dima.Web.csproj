@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Components\NavMenu.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.6" PrivateAssets="all" />
@@ -20,11 +24,24 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Pages\Transactions\" />
     <Folder Include="wwwroot\imgs\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Dima.Core\Dima.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\NavMenu.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\NavMenu.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Components\Utils\NavMenu.razor" />
   </ItemGroup>
 
 </Project>
