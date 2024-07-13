@@ -63,7 +63,7 @@ public partial class EditCategoryPage : ComponentBase
                 {
                     Id = response.Data.Id,
                     Title = response.Data.Title,
-                    Description = response.Data.Description
+                    Description = response.Data.Description is not null ? response.Data.Description : ""
                 };
         }
         catch (Exception ex)

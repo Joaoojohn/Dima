@@ -1,11 +1,12 @@
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Dima.Core.Handlers;
 using Dima.Web;
-using MudBlazor.Services;
+using Dima.Web.Handler;
 using Dima.Web.Security;
 using Microsoft.AspNetCore.Components.Authorization;
-using Dima.Core.Handlers;
-using Dima.Web.Handler;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor.Services;
+using System.Globalization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -23,7 +24,7 @@ builder.Services.AddScoped(x => (ICookieAuthenticationStateProvider)x.GetRequire
 
 builder.Services.AddMudServices();
 
-builder.Services.AddHttpClient(Configuration.HttpClientName, opt => 
+builder.Services.AddHttpClient(Configuration.HttpClientName, opt =>
 {
     opt.BaseAddress = new Uri("http://localhost:5098");
 
@@ -31,6 +32,11 @@ builder.Services.AddHttpClient(Configuration.HttpClientName, opt =>
 
 builder.Services.AddTransient<IAccountHandler, AccountHandler>();
 builder.Services.AddTransient<ITransactionHandler, TransactionHandler>();
-builder.Services.AddTransient<ICategoryHandler, CategoryHandler>(); 
+builder.Services.AddTransient<ICategoryHandler, CategoryHandler>();
+
+builder.Services.AddLocalization();
+CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("pt-BR");
+CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("pt-BR");
+
 
 await builder.Build().RunAsync();

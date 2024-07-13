@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Dima.Core.Extentions
+﻿namespace Dima.Core.Extentions
 {
     public static class DateTimeExtentions
     {
         public static DateTime GetFirstDay(this DateTime date, int? year = null, int? month = null)
-         => new(year ?? date.Year, month ?? date.Month, 1);
+        => new(year ?? date.Year, month ?? date.Month, 1);
 
         public static DateTime GetLastDay(this DateTime date, int? year = null, int? month = null)
             => new DateTime(year ?? date.Year, month ?? date.Month, 1).AddMonths(1).AddDays(-1);
