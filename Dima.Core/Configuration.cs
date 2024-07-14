@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Dima.Core
+﻿namespace Dima.Core
 {
     public static class Configuration
     {
@@ -28,5 +22,7 @@ namespace Dima.Core
 
         public static string BackendUrl { get; set; } = string.Empty;
         public static string FrontendUrl { get; set; } = string.Empty;
+
+        public static long PremiumPrice { get; set; } = 19999;
     }
 }
