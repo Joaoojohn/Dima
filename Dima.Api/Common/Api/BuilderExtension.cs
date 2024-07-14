@@ -5,7 +5,6 @@ using Dima.Core;
 using Dima.Core.Handlers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace Dima.Api.Common.Api
 {
@@ -37,11 +36,12 @@ namespace Dima.Api.Common.Api
         {
             builder.Services.AddTransient<ICategoryHandler, CategoryHandler>();
             builder.Services.AddTransient<ITransactionHandler, TransactionHandler>();
+            builder.Services.AddTransient<IReportHandler, RepostHandler>();
         }
         public static void AddCrossOrigin(this WebApplicationBuilder builder)
         {
-            builder.Services.AddCors(options => 
-                options.AddPolicy(APIConfiguration.CorsPolicyName, policy => 
+            builder.Services.AddCors(options =>
+                options.AddPolicy(APIConfiguration.CorsPolicyName, policy =>
                     policy.WithOrigins([Configuration.BackendUrl, Configuration.FrontendUrl])
             .AllowAnyMethod()
             .AllowAnyHeader()
